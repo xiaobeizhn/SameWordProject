@@ -165,9 +165,37 @@ function vote(a){rpc('cast_vote',{p_pid:pid,p_code:room,p_agree:a}).then(poll,fu
 function drawEnd(){
   var d=new Date(),ds=d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate(),me=mine();
   var rows=st.history.map(function(h){return '<div class="rl">第 '+h.round+' 轮</div><div class="pr">'+h.words.map(function(w){return '<span class="chip c'+w.seat+'">'+(w.word?esc(w.word):'—')+'</span>'}).join('<span class="xx">×</span>')+'</div>'}).join('');
-  put('<div class="card"><div class="cbody"><div class="brand">SAME WORD · 同词相遇</div><div class="big">你们的脑回路相遇了</div><div class="meta">房间 '+st.code+' · 共 '+st.round+' 轮 · '+ds+'</div>'+rows+
+  put('<div class="card"><div class="cbody"><div class="brand">SAME WORD · 同词相遇</div><div class="big">你们的脑回路相遇了</div><div class="meta">房间 '+st.code+' · 共 '+st.round+' 轮 · '+durTxt()+' · '+ds+'</div>'+rows+
    '<p class="foot">表达可以不同，只要想到的是同一个东西。</p>'+
+   '<button class="btn soft" id="exp" onclick="exportImg()">⬇ 导出长图并复制</button>'+
    (me.ready?'':'<button class="btn" onclick="again()">↻ 再来一局</button>')+'<button class="btn ghost" onclick="quit()">退出</button><div class="prog" id="prog"></div></div></div>');
+}
+function durTxt(){var s=st.duration_s;if(s==null)return '用时 —';var m=Math.floor(s/60);return '用时 '+(m?m+' 分 ':'')+(s%60)+' 秒'}
+function exportImg(){
+  var d=new Date(),ds=d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate()+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);
+  var W=750,P=48,S=2,H=st.history,rowH=130,top=330,h=top+H.length*rowH+130;
+  var c=document.createElement('canvas');c.width=W*S;c.height=h*S;var x=c.getContext('2d');x.scale(S,S);
+  var F='-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif';
+  var g=x.createLinearGradient(0,0,W,h);g.addColorStop(0,'#ece4ff');g.addColorStop(1,'#d9f3fb');x.fillStyle=g;x.fillRect(0,0,W,h);
+  function rr(a,b,w,hh,r,col){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+hh,r);x.arcTo(a+w,b+hh,a,b+hh,r);x.arcTo(a,b+hh,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath();x.fillStyle=col;x.fill()}
+  rr(24,24,W-48,h-48,40,'rgba(255,255,255,.82)');
+  x.textAlign='center';x.textBaseline='middle';
+  x.fillStyle='#5b3eea';x.font='700 26px '+F;x.fillText('SAME WORD · 同词相遇',W/2,90);
+  x.fillStyle='#14142b';x.font='800 52px '+F;x.fillText('你们的脑回路相遇了',W/2,165);
+  x.fillStyle='#6b6b85';x.font='500 26px '+F;
+  x.fillText('房间 '+st.code+' · 共 '+st.round+' 轮 · '+durTxt(),W/2,230);x.fillText(ds,W/2,272);
+  var bg={1:['#ece8ff','#4a2fc0'],2:['#dcf6fa','#0b6577'],3:['#ffeadb','#b4521b']},n=st.players.length,gap=44,pw=(W-2*P-(n-1)*gap)/n;
+  H.forEach(function(r,i){var y=top+i*rowH;
+    x.textAlign='left';x.fillStyle='#6b6b85';x.font='700 22px '+F;x.fillText('第 '+r.round+' 轮',P,y+14);
+    r.words.forEach(function(w,j){var px=P+j*(pw+gap),col=bg[w.seat]||bg[1];rr(px,y+36,pw,76,24,col[0]);
+      var t=w.word||'—',fs=34;x.font='800 '+fs+'px '+F;while(x.measureText(t).width>pw-24&&fs>14){fs-=2;x.font='800 '+fs+'px '+F}
+      x.fillStyle=col[1];x.textAlign='center';x.fillText(t,px+pw/2,y+75);
+      if(j<n-1){x.fillStyle='#777';x.font='700 28px '+F;x.fillText('×',px+pw+gap/2,y+75)}})});
+  x.textAlign='center';x.fillStyle='#6b6b85';x.font='500 22px '+F;x.fillText('表达可以不同，只要想到的是同一个东西。',W/2,h-80);
+  c.toBlob(function(b){
+    var dl=function(){var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='同词相遇-'+st.code+'.png';a.click();toast('已保存图片')};
+    try{navigator.clipboard.write([new ClipboardItem({'image/png':b})]).then(function(){toast('长图已复制到剪贴板')},dl)}catch(e){dl()}
+  },'image/png');
 }
 function again(){rpc('play_again',{p_pid:pid,p_code:room}).then(poll,function(){toast('操作失败，请重试')})}
 /* ---------- boot ---------- */
