@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>猜词四人豪华包厢版</title>
+<title>猜词私人豪华包厢版</title>
 <style>
 :root{--ink:#14142b;--mute:#6b6b85;--p:#6d4aff;--line:#e3e0f2}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -71,7 +71,7 @@ var cfg={secs:60,custom:false,cv:45,max:2};
 var ERR={room_not_found:'没有找到这个房间。',room_unavailable:'房间已经开始或满员啦。'};
 function rpc(fn,args){return fetch(SB+'/rest/v1/rpc/'+fn,{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify(args)}).then(function(r){return r.json().catch(function(){return null}).then(function(j){if(!r.ok)throw new Error((j&&j.message)||'error');return j})})}
 function toast(m){var t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(function(){t.style.display='none'},2600)}
-function header(){return '<div class="hd"><div class="logo"><i></i><i></i></div><div><b>猜词四人豪华包厢版</b><small>SAME WORD</small></div>'+(room?'<div class="pill">房间 <span class="code">'+room+'</span></div>':'')+'</div>'}
+function header(){return '<div class="hd"><div class="logo"><i></i><i></i></div><div><b>猜词私人豪华包厢版</b><small>SAME WORD</small></div>'+(room?'<div class="pill">房间 <span class="code">'+room+'</span></div>':'')+'</div>'}
 function put(h){$('#app').innerHTML=header()+h}
 /* ---------- home ---------- */
 function home(){
@@ -89,7 +89,7 @@ function home(){
   '<div class="or">或者</div><div class="lab">房间码</div>'+
   '<div class="row"><input class="in code" id="code" maxlength="6" placeholder="房间码" value="'+esc(cur)+'" onkeydown="if(event.key==\'Enter\')joinRoom()"><button class="go" onclick="joinRoom()">→</button></div>'+
   '<button class="btn soft" onclick="randomMatch()">不想等？来随机匹配 →</button>'+
-  (errMsg?'<div class="err">'+esc(errMsg)+'</div>':'')+'</div></div><p class="foot">猜词四人豪华包厢版 · 一起联想小游戏</p>');
+  (errMsg?'<div class="err">'+esc(errMsg)+'</div>':'')+'</div></div><p class="foot">猜词私人豪华包厢版 · 一起联想小游戏</p>');
 }
 function setSecs(n){if(n){cfg.custom=false;cfg.secs=n}else cfg.custom=true;home()}
 function setMax(n){cfg.max=n;home()}
@@ -165,7 +165,7 @@ function vote(a){rpc('cast_vote',{p_pid:pid,p_code:room,p_agree:a}).then(poll,fu
 function drawEnd(){
   var d=new Date(),ds=d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate(),me=mine();
   var rows=st.history.map(function(h){return '<div class="rl">第 '+h.round+' 轮</div><div class="pr">'+h.words.map(function(w){return '<span class="chip c'+w.seat+'">'+(w.word?esc(w.word):'—')+'</span>'}).join('<span class="xx">×</span>')+'</div>'}).join('');
-  put('<div class="card"><div class="cbody"><div class="brand">SAME WORD · 猜词四人豪华包厢版</div><div class="big">你们的脑回路相遇了</div><div class="meta">房间 '+st.code+' · 共 '+st.round+' 轮 · '+durTxt()+' · '+ds+'</div>'+rows+
+  put('<div class="card"><div class="cbody"><div class="brand">SAME WORD · 猜词私人豪华包厢版</div><div class="big">你们的脑回路相遇了</div><div class="meta">房间 '+st.code+' · 共 '+st.round+' 轮 · '+durTxt()+' · '+ds+'</div>'+rows+
    '<p class="foot">表达可以不同，只要想到的是同一个东西。</p>'+
    '<button class="btn soft" id="exp" onclick="exportImg()">⬇ 导出长图并复制</button>'+
    (me.ready?'':'<button class="btn" onclick="again()">↻ 再来一局</button>')+'<button class="btn ghost" onclick="quit()">退出</button><div class="prog" id="prog"></div></div></div>');
@@ -180,7 +180,7 @@ function exportImg(){
   function rr(a,b,w,hh,r,col){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+hh,r);x.arcTo(a+w,b+hh,a,b+hh,r);x.arcTo(a,b+hh,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath();x.fillStyle=col;x.fill()}
   rr(24,24,W-48,h-48,40,'rgba(255,255,255,.82)');
   x.textAlign='center';x.textBaseline='middle';
-  x.fillStyle='#5b3eea';x.font='700 26px '+F;x.fillText('SAME WORD · 猜词四人豪华包厢版',W/2,90);
+  x.fillStyle='#5b3eea';x.font='700 26px '+F;x.fillText('SAME WORD · 猜词私人豪华包厢版',W/2,90);
   x.fillStyle='#14142b';x.font='800 52px '+F;x.fillText('你们的脑回路相遇了',W/2,165);
   x.fillStyle='#6b6b85';x.font='500 26px '+F;
   x.fillText('房间 '+st.code+' · 共 '+st.round+' 轮 · '+durTxt(),W/2,230);x.fillText(ds,W/2,272);
@@ -193,7 +193,7 @@ function exportImg(){
       if(j<n-1){x.fillStyle='#777';x.font='700 28px '+F;x.fillText('×',px+pw+gap/2,y+75)}})});
   x.textAlign='center';x.fillStyle='#6b6b85';x.font='500 22px '+F;x.fillText('表达可以不同，只要想到的是同一个东西。',W/2,h-80);
   c.toBlob(function(b){
-    var dl=function(){var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='猜词四人豪华包厢版-'+st.code+'.png';a.click();toast('已保存图片')};
+    var dl=function(){var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='猜词私人豪华包厢版-'+st.code+'.png';a.click();toast('已保存图片')};
     try{navigator.clipboard.write([new ClipboardItem({'image/png':b})]).then(function(){toast('长图已复制到剪贴板')},dl)}catch(e){dl()}
   },'image/png');
 }
