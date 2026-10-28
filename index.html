@@ -87,7 +87,7 @@ function home(){
   '<button class="opt '+(cfg.max==2?'on':'')+'" onclick="setMax(2)">2 人</button><button class="opt '+(cfg.max==3?'on':'')+'" onclick="setMax(3)">3 人</button></div>'+
   '<button class="btn" onclick="createRoom()">✨ 创建房间</button>'+
   '<div class="or">或者</div><div class="lab">房间码</div>'+
-  '<div class="row"><input class="in code" id="code" maxlength="6" placeholder="例如 4B5XZM" value="'+esc(cur)+'" onkeydown="if(event.key==\'Enter\')joinRoom()"><button class="go" onclick="joinRoom()">→</button></div>'+
+  '<div class="row"><input class="in code" id="code" maxlength="6" placeholder="房间码" value="'+esc(cur)+'" onkeydown="if(event.key==\'Enter\')joinRoom()"><button class="go" onclick="joinRoom()">→</button></div>'+
   '<button class="btn soft" onclick="randomMatch()">不想等？来随机匹配 →</button>'+
   (errMsg?'<div class="err">'+esc(errMsg)+'</div>':'')+'</div></div><p class="foot">同词相遇 · 一起联想小游戏</p>');
 }
