@@ -56,7 +56,7 @@ input.in:focus{border-color:var(--p)}input.code{letter-spacing:6px;text-transfor
 .code{font-family:ui-monospace,Menlo,Consolas,monospace}
 .bigcode{font-size:44px;font-weight:800;letter-spacing:8px;text-align:center;color:#4a2fc0;margin:8px 0 4px;font-family:ui-monospace,Menlo,Consolas,monospace}
 .seat{display:flex;justify-content:space-between;padding:14px 18px;border-radius:18px;margin-top:10px;font-weight:700}
-.toast{position:fixed;left:50%;bottom:36px;transform:translateX(-50%);background:#14142b;color:#fff;padding:12px 20px;border-radius:999px;font-size:15px;z-index:9;max-width:90%}
+.toast{position:fixed;left:50%;bottom:36px;transform:translateX(-50%);background:#14142b;color:#fff;padding:12px 20px;border-radius:999px;font-size:15px;z-index:30;max-width:90%}
 .badge{display:inline-block;margin-top:10px;padding:4px 12px;border-radius:999px;font-weight:700;font-size:14px}
 .b1{background:#d9f7e4;color:#13703a}.b0{background:#fff;color:#555}
 </style></head><body><div id="app"></div><div id="toast" class="toast" style="display:none"></div>
@@ -167,7 +167,7 @@ function drawEnd(){
   var rows=st.history.map(function(h){return '<div class="rl">第 '+h.round+' 轮</div><div class="pr">'+h.words.map(function(w){return '<span class="chip c'+w.seat+'">'+(w.word?esc(w.word):'—')+'</span>'}).join('<span class="xx">×</span>')+'</div>'}).join('');
   put('<div class="card"><div class="cbody"><div class="brand">SAME WORD · 猜词私人豪华包厢版</div><div class="big">你们的脑回路相遇了</div><div class="meta">房间 '+st.code+' · 共 '+st.round+' 轮 · '+durTxt()+' · '+ds+'</div>'+rows+
    '<p class="foot">表达可以不同，只要想到的是同一个东西。</p>'+
-   '<button class="btn soft" id="exp" onclick="exportImg()">⬇ 导出长图并复制</button>'+
+   '<button class="btn soft" id="exp" onclick="exportImg()">⬇ 导出长图</button>'+
    (me.ready?'':'<button class="btn" onclick="again()">↻ 再来一局</button>')+'<button class="btn ghost" onclick="quit()">退出</button><div class="prog" id="prog"></div></div></div>');
 }
 function durTxt(){var s=st.duration_s;if(s==null)return '用时 —';var m=Math.floor(s/60);return '用时 '+(m?m+' 分 ':'')+(s%60)+' 秒'}
@@ -193,8 +193,23 @@ function exportImg(){
       if(j<n-1){x.fillStyle='#777';x.font='700 28px '+F;x.fillText('×',px+pw+gap/2,y+75)}})});
   x.textAlign='center';x.fillStyle='#6b6b85';x.font='500 22px '+F;x.fillText('表达可以不同，只要想到的是同一个东西。',W/2,h-80);
   c.toBlob(function(b){
-    var dl=function(){var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='猜词私人豪华包厢版-'+st.code+'.png';a.click();toast('已保存图片')};
-    try{navigator.clipboard.write([new ClipboardItem({'image/png':b})]).then(function(){toast('长图已复制到剪贴板')},dl)}catch(e){dl()}
+    var url=URL.createObjectURL(b),fn='猜词私人豪华包厢版-'+st.code+'.png';
+    var file=null;try{file=new File([b],fn,{type:'image/png'})}catch(e){}
+    var canShare=!!(file&&navigator.canShare&&navigator.canShare({files:[file]}));
+    var o=document.createElement('div');o.id='ov';
+    o.style.cssText='position:fixed;inset:0;z-index:20;background:rgba(20,20,43,.88);overflow:auto;padding:16px;text-align:center';
+    o.innerHTML='<div style="max-width:480px;margin:0 auto"><p style="color:#fff;font-weight:700;margin:6px 0 12px">长按下方图片，保存到相册</p>'+
+      '<img src="'+url+'" style="width:100%;border-radius:16px;display:block;-webkit-touch-callout:default;user-select:auto">'+
+      '<div class="row" style="margin-top:14px;flex-wrap:wrap">'+(canShare?'<button class="btn" id="o-share" style="margin:0">分享 / 保存</button>':'')+
+      '<button class="btn soft" id="o-copy" style="margin:0">复制图片</button><button class="btn soft" id="o-dl" style="margin:0">下载图片</button></div>'+
+      '<button class="btn ghost" id="o-close" style="margin:14px 0 24px">关闭</button></div>';
+    document.body.appendChild(o);
+    var close=function(){URL.revokeObjectURL(url);o.remove()};
+    $('#o-close').onclick=close;
+    $('#o-dl').onclick=function(){var a=document.createElement('a');a.href=url;a.download=fn;document.body.appendChild(a);a.click();a.remove();toast('已开始下载')};
+    $('#o-copy').onclick=function(){try{navigator.clipboard.write([new ClipboardItem({'image/png':b})]).then(function(){toast('长图已复制到剪贴板')},function(){toast('当前浏览器不支持复制，请长按图片保存')})}catch(e){toast('当前浏览器不支持复制，请长按图片保存')}};
+    if(canShare)$('#o-share').onclick=function(){navigator.share({files:[file],title:'同词相遇'}).catch(function(){})};
+    try{navigator.clipboard.write([new ClipboardItem({'image/png':b})]).then(function(){toast('长图已复制到剪贴板')},function(){})}catch(e){}
   },'image/png');
 }
 function again(){rpc('play_again',{p_pid:pid,p_code:room}).then(poll,function(){toast('操作失败，请重试')})}
