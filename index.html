@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>同词相遇</title>
+<style>
+:root{--ink:#14142b;--mute:#6b6b85;--p:#6d4aff;--line:#e3e0f2}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+background:radial-gradient(900px 500px at 10% -10%,#e9e1ff,transparent 60%),radial-gradient(800px 500px at 100% 100%,#d9f3fb,transparent 60%),#f6f4fd}
+#app{max-width:480px;margin:0 auto;padding:16px 16px 40px}
+.hd{display:flex;align-items:center;gap:12px;padding:8px 0 18px}
+.logo{width:44px;height:44px;border-radius:14px;background:#14142b;display:flex;align-items:center;justify-content:center}
+.logo i{width:18px;height:18px;border-radius:50%;background:#8b5cff}.logo i+i{background:#3fd8ee;margin-left:-6px}
+.hd b{font-size:20px;display:block}.hd small{color:var(--mute);letter-spacing:.5px}
+.pill{margin-left:auto;background:#fff;border:1px solid var(--line);border-radius:999px;padding:9px 16px;font-weight:600;font-size:15px;white-space:nowrap}
+.card{background:rgba(255,255,255,.9);border-radius:32px;box-shadow:0 20px 50px rgba(109,74,255,.12);overflow:hidden}
+.cbar{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid #eeeaf8;font-weight:700;color:#555}
+.cbar .t{background:#f3f1fb;border-radius:999px;padding:8px 14px;font-weight:700;color:#333}
+.cbody{padding:24px}
+h1{margin:0 0 8px;font-size:30px}h2{margin:0 0 6px;font-size:36px;line-height:1.2;text-align:center}
+.sub{color:var(--mute);margin:0 0 20px;font-size:16px;line-height:1.5}
+.lab{font-weight:700;color:#555;margin:18px 0 10px;font-size:15px;letter-spacing:2px}
+.row{display:flex;gap:12px}.row>*{flex:1}
+.opt{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:14px 8px;font-size:18px;color:#444;cursor:pointer;text-align:center;font-family:inherit}
+.opt.on{background:#efebff;border-color:var(--p);color:#4a2fc0;box-shadow:0 0 0 5px #efebff}
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;border:0;border-radius:999px;padding:17px;font-size:20px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit;
+background:linear-gradient(90deg,#5b3eea,#8458f5);box-shadow:0 12px 26px rgba(109,74,255,.3);margin-top:16px}
+.btn.soft{background:#ece8ff;color:#4a2fc0;box-shadow:none}.btn.ghost{background:#fff;color:#444;border:1.5px solid var(--line);box-shadow:none}
+.btn[disabled]{opacity:.55;cursor:default}
+.or{display:flex;align-items:center;gap:14px;color:var(--mute);margin:22px 0 0}.or:before,.or:after{content:"";flex:1;height:1px;background:var(--line)}
+input.in{width:100%;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:20px 22px;font-size:22px;font-family:inherit;outline:none;color:var(--ink)}
+input.in:focus{border-color:var(--p)}input.code{letter-spacing:6px;text-transform:uppercase}
+.go{width:62px;flex:none!important;border:0;border-radius:22px;background:#14142b;color:#fff;font-size:26px;cursor:pointer}
+.err{display:inline-block;margin-top:14px;background:#fde8e8;color:#c02b2b;padding:10px 16px;border-radius:14px;font-weight:600}
+.lead{color:#5b3eea;font-weight:700;text-align:center;margin:0 0 14px;font-size:18px}
+.pc{border-radius:28px;padding:18px 16px;text-align:center;margin:0}
+.pc small{display:block;letter-spacing:3px;color:#555;margin-bottom:6px}
+.pc b{display:block;font-size:34px;word-break:break-all;line-height:1.25}
+.c1{background:#ece8ff;color:#4a2fc0}.c2{background:#dcf6fa;color:#0b6577}.c3{background:#ffeadb;color:#b4521b}
+.pc .tag{display:inline-block;margin-top:10px;font-size:14px;font-weight:700;background:rgba(255,255,255,.75);padding:4px 12px;border-radius:999px;color:#333}
+.x{text-align:center;font-size:26px;color:#777;margin:6px 0;font-weight:700}
+.muted{color:var(--mute)}.empty{opacity:.55;font-size:24px!important}
+.chips{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;margin-bottom:18px}
+.chip{border-radius:14px;padding:8px 14px;font-weight:700;font-size:18px}
+.prog{text-align:center;color:var(--mute);margin-top:16px;font-size:15px;min-height:22px}
+.hist{margin-top:24px;border-top:1px solid #eeeaf8;padding-top:14px}
+.hist h4{margin:0 0 10px;color:var(--mute);font-size:14px}
+.hr{display:flex;align-items:center;gap:6px;margin-bottom:8px;font-size:14px}.hr>span:first-child{width:46px;color:var(--mute);flex:none}
+.hr .chip{font-size:14px;padding:5px 10px}
+.big{font-size:32px;text-align:center;font-weight:800;margin:6px 0}
+.brand{text-align:center;color:#5b3eea;font-weight:700;letter-spacing:1px;margin-top:4px}
+.meta{text-align:center;color:var(--mute);margin:6px 0 22px}
+.rl{font-size:13px;font-weight:700;color:var(--mute);margin:14px 0 6px}
+.pr{display:flex;align-items:center;gap:8px}.pr .chip{flex:1;text-align:center;font-size:19px;border-radius:16px;padding:14px 6px;word-break:break-all}.pr .xx{color:#777;font-weight:700}
+.foot{text-align:center;color:var(--mute);font-size:13px;margin-top:20px}
+.code{font-family:ui-monospace,Menlo,Consolas,monospace}
+.bigcode{font-size:44px;font-weight:800;letter-spacing:8px;text-align:center;color:#4a2fc0;margin:8px 0 4px;font-family:ui-monospace,Menlo,Consolas,monospace}
+.seat{display:flex;justify-content:space-between;padding:14px 18px;border-radius:18px;margin-top:10px;font-weight:700}
+.toast{position:fixed;left:50%;bottom:36px;transform:translateX(-50%);background:#14142b;color:#fff;padding:12px 20px;border-radius:999px;font-size:15px;z-index:9;max-width:90%}
+.badge{display:inline-block;margin-top:10px;padding:4px 12px;border-radius:999px;font-weight:700;font-size:14px}
+.b1{background:#d9f7e4;color:#13703a}.b0{background:#fff;color:#555}
+</style></head><body><div id="app"></div><div id="toast" class="toast" style="display:none"></div>
+<script>
+var SB='https://xvwpptxdpxwsbeqyhmgm.supabase.co',KEY='sb_publishable_iLQORaouE58hc-TyFxErKQ_kIwVGOOl';
+var $=function(s){return document.querySelector(s)};
+var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+var ls=function(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){return null}};
+var pid=ls('sw_pid');if(!pid){pid=(crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0;return (c=='x'?r:(r&3|8)).toString(16)}));ls('sw_pid',pid)}
+var room=null,st=null,endAt=null,vk='',busy=false,errMsg='',autoSent='',timer=null;
+var cfg={secs:60,custom:false,cv:45,max:2};
+var ERR={room_not_found:'没有找到这个房间。',room_unavailable:'房间已经开始或满员啦。'};
+function rpc(fn,args){return fetch(SB+'/rest/v1/rpc/'+fn,{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify(args)}).then(function(r){return r.json().catch(function(){return null}).then(function(j){if(!r.ok)throw new Error((j&&j.message)||'error');return j})})}
+function toast(m){var t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(function(){t.style.display='none'},2600)}
+function header(){return '<div class="hd"><div class="logo"><i></i><i></i></div><div><b>同词相遇</b><small>SAME WORD</small></div>'+(room?'<div class="pill">房间 <span class="code">'+room+'</span></div>':'')+'</div>'}
+function put(h){$('#app').innerHTML=header()+h}
+/* ---------- home ---------- */
+function home(){
+  var pre=(location.hash||'').replace('#','').toUpperCase();
+  var cur=$('#code')?$('#code').value:pre;
+  put('<div class="card"><div class="cbody"><h1>开始一局</h1><p class="sub">创建新房间，或输入朋友发来的房间码。</p>'+
+  '<div class="lab">每轮思考时间</div><div class="row">'+
+  '<button class="opt '+(!cfg.custom&&cfg.secs==30?'on':'')+'" onclick="setSecs(30)">30 秒</button>'+
+  '<button class="opt '+(!cfg.custom&&cfg.secs==60?'on':'')+'" onclick="setSecs(60)">60 秒</button>'+
+  '<button class="opt '+(cfg.custom?'on':'')+'" onclick="setSecs(0)">自定义</button></div>'+
+  (cfg.custom?'<div style="margin-top:12px"><input class="in" id="cv" type="number" min="5" max="600" value="'+cfg.cv+'" placeholder="5-600 秒" oninput="cfg.cv=this.value"></div>':'')+
+  '<div class="lab">私人房间人数</div><div class="row">'+
+  '<button class="opt '+(cfg.max==2?'on':'')+'" onclick="setMax(2)">2 人</button><button class="opt '+(cfg.max==3?'on':'')+'" onclick="setMax(3)">3 人</button></div>'+
+  '<button class="btn" onclick="createRoom()">✨ 创建房间</button>'+
+  '<div class="or">或者</div><div class="lab">房间码</div>'+
+  '<div class="row"><input class="in code" id="code" maxlength="6" placeholder="例如 4B5XZM" value="'+esc(cur)+'" onkeydown="if(event.key==\'Enter\')joinRoom()"><button class="go" onclick="joinRoom()">→</button></div>'+
+  '<button class="btn soft" onclick="randomMatch()">不想等？来随机匹配 →</button>'+
+  (errMsg?'<div class="err">'+esc(errMsg)+'</div>':'')+'</div></div><p class="foot">同词相遇 · 一起联想小游戏</p>');
+}
+function setSecs(n){if(n){cfg.custom=false;cfg.secs=n}else cfg.custom=true;home()}
+function setMax(n){cfg.max=n;home()}
+function secsVal(){if(!cfg.custom)return cfg.secs;var v=parseInt(cfg.cv,10);return isNaN(v)?60:Math.max(5,Math.min(600,v))}
+function fail(e){errMsg=ERR[e.message]||'服务暂时开小差了，请稍后再试。';if(!room)home();else toast(errMsg)}
+function enter(c){room=c;ls('sw_room',c);errMsg='';vk='';st=null;put('<div class="card"><div class="cbody"><p class="sub" style="text-align:center">进入房间中…</p></div></div>');poll()}
+function createRoom(){errMsg='';rpc('create_room',{p_pid:pid,p_seconds:secsVal(),p_max:cfg.max,p_public:false}).then(enter,fail)}
+function joinRoom(){var c=($('#code').value||'').trim().toUpperCase();if(!c){errMsg='请先输入房间码。';return home()}errMsg='';rpc('join_room',{p_pid:pid,p_code:c}).then(enter,fail)}
+function randomMatch(){errMsg='';rpc('match_random',{p_pid:pid}).then(enter,fail)}
+function leaveLocal(msg){room=null;st=null;vk='';ls('sw_room',null);if(location.hash)history.replaceState(null,'',location.pathname);home();if(msg)toast(msg)}
+function quit(){var c=room;leaveLocal();rpc('leave_room',{p_pid:pid,p_code:c}).catch(function(){})}
+function copyInvite(){var u=location.origin+location.pathname+'#'+room;var d=function(){toast('邀请链接已复制')};if(navigator.clipboard)navigator.clipboard.writeText(u).then(d,function(){prompt('复制邀请链接',u)});else prompt('复制邀请链接',u)}
+/* ---------- polling ---------- */
+function poll(){if(!room||busy)return;busy=true;var c=room;rpc('get_state',{p_pid:pid,p_code:c}).then(function(s){if(c!==room)return;got(s)}).catch(function(){}).then(function(){busy=false})}
+function got(s){
+  if(s.status==='none'||s.status==='closed'){leaveLocal(s.status==='closed'?'有玩家退出了，已回到主页':'房间已失效');return}
+  st=s;endAt=s.ms_left==null?null:Date.now()+s.ms_left;
+  var me=mine(),k=[s.status,s.round,s.game_no,s.players.length,s.my_word?1:0,me.voted?1:0,me.ready?1:0].join('|');
+  if(k!==vk){vk=k;draw()}tick();
+}
+function mine(){return st.players.filter(function(p){return p.seat===st.me})[0]||{}}
+function cnt(f){return st.players.filter(function(p){return p[f]}).length}
+function tick(){
+  if(!st)return;var t=$('#t');var ms=endAt==null?null:Math.max(0,endAt-Date.now());
+  if(t&&ms!=null)t.textContent=Math.ceil(ms/1000)+'s';
+  var p=$('#prog');if(p){var n=st.players.length;
+    if(st.status==='writing')p.textContent=st.my_word?'已锁定，等待其他玩家… ('+cnt('submitted')+'/'+n+')':'已有 '+cnt('submitted')+'/'+n+' 位玩家提交';
+    else if(st.status==='reveal')p.textContent=mine().voted?'已投票，等待其他玩家… ('+cnt('voted')+'/'+n+')':'';
+    else if(st.status==='voted')p.textContent='下一轮即将开始…';
+    else if(st.status==='finished')p.textContent=mine().ready?'等待所有玩家准备… ('+cnt('ready')+'/'+n+')':(cnt('ready')?cnt('ready')+'/'+n+' 位玩家已准备':'');
+  }
+  if(st.status==='writing'&&!st.my_word&&ms===0){var i=$('#w'),key=st.game_no+'-'+st.round;if(i&&i.value.trim()&&autoSent!==key){autoSent=key;lock()}}
+}
+/* ---------- views ---------- */
+function nm(seat){return '玩家 '+seat}
+function wordsOf(h){return h?h.words:[]}
+function hist(upto){
+  var hs=st.history.filter(function(h){return h.round<=upto});if(!hs.length)return '';
+  return '<div class="hist"><h4>前几轮的词</h4>'+hs.map(function(h){return '<div class="hr"><span>第'+h.round+'轮</span>'+h.words.map(function(w){return '<span class="chip c'+w.seat+'">'+(w.word?esc(w.word):'—')+'</span>'}).join('<span class="muted">×</span>')+'</div>'}).join('')+'</div>';
+}
+function draw(){
+  if(!st)return;var s=st.status;
+  if(s==='lobby'){return put('<div class="card"><div class="cbody"><h1>等待伙伴加入</h1><p class="sub">把房间码发给朋友，满 '+st.max+' 人自动开始。</p><div class="bigcode">'+st.code+'</div>'+
+    [1,2,3].slice(0,st.max).map(function(i){var on=st.players.some(function(p){return p.seat===i});return '<div class="seat c'+i+'" style="opacity:'+(on?1:.5)+'"><span>'+nm(i)+(i===st.me?'（你）':'')+'</span><span>'+(on?'已加入':'等待中…')+'</span></div>'}).join('')+
+    '<button class="btn" onclick="copyInvite()">复制邀请链接</button><button class="btn ghost" onclick="quit()">退出房间</button></div></div>')}
+  if(s==='writing')return drawWrite();
+  if(s==='reveal'||s==='voted')return drawReveal();
+  if(s==='finished')return drawEnd();
+}
+function drawWrite(){
+  var prev=st.history[st.history.length-1],locked=!!st.my_word;
+  var chips=prev?'<div class="chips">'+prev.words.map(function(w){return '<span class="chip c'+w.seat+'">'+(w.word?esc(w.word):'—')+'</span>'}).join('<span class="muted">×</span>')+'</div>':'';
+  put('<div class="card"><div class="cbar"><span>第 '+st.round+' 轮</span><span class="t">⏱ <span id="t">'+Math.ceil((st.ms_left||0)/1000)+'s</span></span></div><div class="cbody">'+
+   '<p class="lead">'+(prev?'根据上一轮的词语，自由联想':'想一个词，看看你们能不能想到一起')+'</p>'+chips+
+   '<h2>写下你脑中的那个词</h2><p class="sub" style="text-align:center">提交后不能修改，其他玩家在揭晓前看不到。</p>'+
+   (locked?'<div class="pc c'+st.me+'"><small>你的词</small><b>'+esc(st.my_word)+'</b></div>':
+   '<input class="in" id="w" maxlength="40" autocomplete="off" placeholder="输入一个词" style="text-align:center" onkeydown="if(event.key===\'Enter\')lock()"><button class="btn" id="lk" onclick="lock()">✓ 锁定答案</button>')+
+   '<div class="prog" id="prog"></div>'+hist(st.round-2)+'</div></div>');
+  var i=$('#w');if(i)i.focus();
+}
+function lock(){var i=$('#w');if(!i)return;var w=i.value.trim();if(!w){toast('先写一个词吧');return}var b=$('#lk');if(b)b.disabled=true;rpc('submit_word',{p_pid:pid,p_code:room,p_word:w}).then(poll,function(){if(b)b.disabled=false;toast('提交失败，请重试')})}
+function drawReveal(){
+  var cur=st.history.filter(function(h){return h.round===st.round})[0],ws=wordsOf(cur),voted=st.status==='voted',me=mine();
+  var vs=cur&&cur.votes?cur.votes:[];
+  var cards=ws.map(function(w){var v=vs.filter(function(x){return x.seat===w.seat})[0];
+    return '<div class="pc c'+w.seat+'"><small>'+nm(w.seat)+(w.seat===st.me?'（你）':'')+'</small><b'+(w.word?'':' class="empty"')+'>'+(w.word?esc(w.word):'（未提交）')+'</b>'+
+      (voted&&v?'<span class="badge '+(v.agree?'b1':'b0')+'">'+(v.agree?'认为意思相同':'继续下一轮')+'</span>':'')+'</div>'}).join('<div class="x">×</div>');
+  var act=voted?'':(me.voted?'':'<p class="sub" style="margin-top:22px">觉得这些词说的是同一个东西？所有人都确认也算成功。</p><div style="text-align:center"><button class="btn soft" style="width:auto;display:inline-flex;padding:16px 34px" onclick="vote(true)">✨ 我认为意思相同</button></div><button class="btn" onclick="vote(false)">→ 继续下一轮</button>');
+  put('<div class="card"><div class="cbar"><span>第 '+st.round+' 轮 · 揭晓</span><span class="t">'+(voted?'投票结果':'还差一点')+' · <span id="t">'+Math.ceil((st.ms_left||0)/1000)+'s</span></span></div><div class="cbody">'+
+    '<p class="lead">从这'+(ws.length==2?'两':'几')+'个词之间，寻找下一步</p>'+cards+act+'<div class="prog" id="prog"></div>'+hist(st.round-1)+'</div></div>');
+}
+function vote(a){rpc('cast_vote',{p_pid:pid,p_code:room,p_agree:a}).then(poll,function(){toast('投票失败，请重试')})}
+function drawEnd(){
+  var d=new Date(),ds=d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate(),me=mine();
+  var rows=st.history.map(function(h){return '<div class="rl">第 '+h.round+' 轮</div><div class="pr">'+h.words.map(function(w){return '<span class="chip c'+w.seat+'">'+(w.word?esc(w.word):'—')+'</span>'}).join('<span class="xx">×</span>')+'</div>'}).join('');
+  put('<div class="card"><div class="cbody"><div class="brand">SAME WORD · 同词相遇</div><div class="big">你们的脑回路相遇了</div><div class="meta">房间 '+st.code+' · 共 '+st.round+' 轮 · '+ds+'</div>'+rows+
+   '<p class="foot">表达可以不同，只要想到的是同一个东西。</p>'+
+   (me.ready?'':'<button class="btn" onclick="again()">↻ 再来一局</button>')+'<button class="btn ghost" onclick="quit()">退出</button><div class="prog" id="prog"></div></div></div>');
+}
+function again(){rpc('play_again',{p_pid:pid,p_code:room}).then(poll,function(){toast('操作失败，请重试')})}
+/* ---------- boot ---------- */
+setInterval(poll,1000);setInterval(tick,250);
+var saved=ls('sw_room');
+if(saved){room=saved;put('<div class="card"><div class="cbody"><p class="sub" style="text-align:center">恢复房间中…</p></div></div>');poll()}else home();
+</script></body></html>
